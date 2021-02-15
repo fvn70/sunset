@@ -38,8 +38,6 @@ let hSky;
 let k;
 // диаметр солнца
 let d0;
-// флаг контроля таймеров
-let flgRestart = true;
 
 function setup() {
   let canvas = createCanvas(600, 400);
@@ -62,8 +60,7 @@ function setup() {
 }
 
 function startSunTimer() {
-  if (flgRestart && (sunY <= sunMin || sunY >=sunMax)  )  {
-    flgRestart = false;
+  if (!sunTimer) {
     upDown = -upDown;
     sunMove();
     sunTimer = setInterval(sunMove, 50);
@@ -84,12 +81,13 @@ function sunMove() {
   sun = ellipse(width/2, sunY, d0, d0);
  
   if (sunY <= sunMin || sunY >= sunMax) {
-    if (sunY >= sunMax) {
+    if (sunY >= sunMax && !skyTimer) {
 // Изменить цвет неба
         skyTimer = setInterval(skyColor, 50);
     }
     if (sunTimer > 0) {
       clearInterval(sunTimer); 
+      sunTimer = false;
     }
 
   }
@@ -128,7 +126,7 @@ function skyColor() {
   cbr = cbr - upDown;
   if (cbr < 50 || cbr > 100) {
     clearInterval(skyTimer); 
-    flgRestart = true;
+    skyTimer = false;
   }      
   sky_color = color(ch, cs, cbr);
 	
